@@ -1,0 +1,68 @@
+.span8
+	section#wrapper
+		article
+			#canvas
+				#inputSkill
+				#inputTitle
+		
+.span3
+	#alert
+
+	form.quad( action='/quad/put' )
+		- if (session.authenticatedUser)
+			input#userid( type="hidden", name="userid", value="0" )
+		- else
+			input#userid( type="hidden", name="userid", value=session.authenticatedUser )
+		#session.btn-group( data-toggle="buttons-radio" )
+			- if (session.authenticatedUser)
+				button#login.btn.btn-primary.btn-large.active( type="button" ) Login
+				button#logout.btn.btn-primary.btn-large( type="button" ) Logout
+			- else
+				button#login.btn.btn-primary.btn-large( type="button" ) Login
+				button#logout.btn.btn-primary.btn-large.active( type="button" ) Logout
+	
+		#chart.btn-group
+			a.btn.dropdown-toggle.btn-primary( data-toggle="dropdown", href="#" ) Load Chart...
+				span.caret
+			ul.dropdown-menu
+		
+		#restricted
+			#modify.btn-group( data-toggle="buttons-radio" )
+				button#lock.btn.btn-primary.btn-large.active( type="button", value="lock" ) Locked
+				button#unlock.btn.btn-primary.btn-large( type="button", value="unlock" ) Unlocked
+			
+			#modifiable
+				hr
+		
+				button#save.btn.btn-info.quad( type="button" ) Save
+				button#reset.btn.btn-info.quad( type="button" ) Reset
+				button#share.btn.btn-info.quad( type="button" ) Share
+		
+				#access.btn-group.quad( data-toggle-name="access", data-toggle="buttons-radio" )
+					button.btn.btn-info( type="button", value="private", data-toggle="button" ) Private
+					button.btn.btn-info( type="button", value="shared", data-toggle="button" ) Shared
+					button.btn.btn-info( type="button", value="public", data-toggle="button" ) Public
+				input( type="hidden", name="access", value="0" )
+				
+				button#new.btn.btn-info.quad( type="button" ) New
+				button#copy.btn.btn-info.quad( type="button" ) Copy
+				button#delete.btn.btn-info.quad( type="button" ) Delete
+				
+				hr
+				
+				button#skillnew.btn.btn-warning.skill( type="button" ) New
+				button#skillcopy.btn.btn-warning.skill( type="button" ) Copy
+				button#skilldelete.btn.btn-warning.skill( type="button" ) Delete
+
+	#session-modal.modal.fade
+		.modal-header
+			button.close( data-dismiss="modal" ) ×
+			h3 User Session
+		.modal-body
+			#account One fine body…
+		.modal-footer
+			button.btn.btn-primary( type="button", data-dismiss="modal" ) Close
+
+script( src='/javascripts/kinetic-v3.9.1.js' )
+script( src='/javascripts/storage2.min.js' )
+script( src='/javascripts/skillquadrants.js' )

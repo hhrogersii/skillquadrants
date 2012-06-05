@@ -1,0 +1,78 @@
+!!! 5
+html
+	head
+		title= title
+		meta( name='viewport',content='width=device-width, initial-scale=1.0' )
+		// jquery
+		script(src='http://code.jquery.com/jquery.min.js')
+		
+		//icon
+		link( href='/img/favicon2.ico', rel='shortcut icon', type='image/x-icon' )
+		
+		// jquery ui
+		//link( rel='stylesheet', href='http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css' )
+		//script( src='http://code.jquery.com/ui/1.8.18/jquery-ui.min.js' )
+		
+		// jquery plugins
+		script( src='/javascripts/jquery.event.drag-2.0.js' )
+
+		// the amazing underscore
+		script( src='/javascripts/underscore-min.js' )
+		
+		// dougie
+		script( src='/javascripts/json2.js' )
+		
+		// twitter bootstrap
+		link( rel='stylesheet', href='/libraries/bootstrap/css/bootstrap.min.css' )
+		script(src='/libraries/bootstrap/js/bootstrap.min.js')
+
+		// skillquadrants
+		link( rel='stylesheet', href='/stylesheets/style.css' )
+		link( rel='stylesheet', href='/stylesheets/ChunkFive-fontfacekit/stylesheet.css' )
+
+		// addyosmani jquery ui bootstrap
+		//link( rel='stylesheet', href='/javascripts/addyosmani-jquery-ui-bootstrap-cf2a77b/css/custom-theme/jquery-ui-1.8.16.custom.css' )
+		//link( rel='stylesheet', href='/javascripts/addyosmani-jquery-ui-bootstrap-cf2a77b/css/demo.css' )
+
+		//socket.io
+		script( src='/javascripts/socket.io.min.js' )
+		//script( src='/javascripts/socket.io.chat.js' )
+
+body
+	div.navbar.navbar-fixed-top
+		div.navbar-inner
+			div.container
+				a.brand(href='http://github.com/hhrogersii/skillquadrants') Skill Quadrants
+				ul.nav
+					li.active
+						a(href='/') Home
+					li
+						a(href='/about') About
+					li
+						a(href='/quad') Chart
+					//li
+					//a(href='/chat') Chat
+					//li
+					//a(href='/draw') Draw
+					//li
+					//a(href='/help') Help
+					//li
+					//a(href='http://github.com/hhrogersii/skillquadrants/issues') Feedback/Issues
+					//li
+					//a(href='http://twitter.com/hhrogersii') Contact
+				form.pull-right(action='')
+
+	div.container
+		div.content
+			div.page-header
+				div#logo
+				h1#slogan Sq: <small>visualizing experience vs. understanding (v0.2)</small>
+				//button#icon-github.btn.btn-inverse
+				//i.icon-github
+				//button#icon-twitter.btn.btn-inverse
+				//i.icon-twitter
+			div.row
+				h1.fontface= title
+				!= body
+		footer.footer
+			img( src='/img/tools.png', width="860", height="46", alt="tools" )

@@ -1,0 +1,22 @@
+div.article
+    div.created_at= article.created_at
+    div.body= article.body
+    - each comment in article.comments
+      div.comment
+        div.person= comment.person
+        div.comment= comment.comment
+    div
+      a( href="/blog/" + article._id + "/edit" ) Edit <br>
+      a( href="/blog/" + article._id + "/delete" ) Remove
+    div
+      h3 Add Comment
+      form( method="post", action="/blog/comment")
+        input( type="hidden", name="_id", value=article._id.toHexString())
+        div
+          span Author :
+          input( type="text", name="person", id="addCommentPerson")
+        div
+          span Comment :
+          textarea( name="comment", rows=5, id="addCommentComment")
+        div#editArticleSubmit
+          input(type="submit", value="Send")
