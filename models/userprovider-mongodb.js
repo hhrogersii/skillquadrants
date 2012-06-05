@@ -8,7 +8,7 @@ var ObjectID = require('mongodb').ObjectID;
 // constructor
 UserProvider = function( host, port, username, password ) 
 	{
-		this.db= new Db( 'heroku_app3222703', new Server( host, port, { auto_reconnect: true }, {} ) );
+		this.db= new Db( 'blarg', new Server( host, port, { auto_reconnect: true }, {} ) );
 		
 		this.db.open( function( err, data ) {
 			if( data )
