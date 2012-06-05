@@ -13,7 +13,7 @@ var ObjectID = require('mongodb').ObjectID;
 ChartProvider = function( host, port, username, password ) 
 	{//node-mongo-blog
 		
-		this.db= new Db( 'heroku_app3222703', new Server( host, port, { auto_reconnect: true }, {} ) );
+		this.db= new Db( 'blarg', new Server( host, port, { auto_reconnect: true }, {} ) );
 		
 		this.db.open( function( err, data ) {
 			if( data )
