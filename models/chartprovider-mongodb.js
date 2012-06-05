@@ -36,9 +36,6 @@ ChartProvider = function( host, port, username, password )
 		} );
 	};
 
-//mongo.connect(process.env.MONGOLAB_URI, {heroku_app3222703:5n2egki91f3nt7pu8ur2352iba@}, function(error, db){
-
-
 //getCollection
 ChartProvider.prototype.getCollection= function( callback ) 
 	{
