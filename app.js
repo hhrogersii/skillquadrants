@@ -25,7 +25,7 @@ app.configure( function()
 	
 	app.use( express.bodyParser() ) ;
 	app.use( express.cookieParser() ) ;
-	app.use( express.session({ secret: "blarg" }) ) ;
+	app.use( express.session({ secret: 'blarg' }) ) ;
 	app.use( express.session.ignore.push('/robots.txt') ) ;
 	
 	app.use( express.methodOverride() ) ;

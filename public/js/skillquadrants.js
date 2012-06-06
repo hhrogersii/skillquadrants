@@ -1,5 +1,5 @@
 /*jslint browser: true, bitwise: true, nomen: true, undef: true, sloppy: true, white: true */
-/*globals _, Kinetic, Stage, Chart, Skill, Legend, Editor, Alert */
+/*globals _, Kinetic, Stage, Chart, Skill, Legend, Editor, Alert, Session */
 
 (function($){
 
@@ -1600,10 +1600,15 @@
 							$('#session-authenticate').click( function() {
 								Session.authenticate();
 							} );
+							$('#session-form').submit( function(e) {
+								Session.authenticate();
+								e.preventDefault();
+							} );
 							$('#session-create').click( function() {
 								Session.create();
 							} );
 							$('#session-modal').modal('show');
+							$('#password').focus();
 						}
 					  , failure: function ( )
 						{
@@ -1667,10 +1672,15 @@
 							$('#session-save').click( function() {
 								Session.save();
 							} );
+							$('#session-form').submit( function(e) {
+								Session.save();
+								e.preventDefault();
+							} );
 							$('#session-login').click( function() {
 								Session.login();
 							} );
 							$('#session-modal').modal('show');
+							$('#name').focus();
 						}
 					  , failure: function ( )
 						{

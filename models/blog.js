@@ -4,12 +4,7 @@
  
 // DAO
 var ArticleProvider = require( './articleprovider-mongodb' ).ArticleProvider;
-//var ap = new ArticleProvider('localhost', 27017);
 var ap = new ArticleProvider( 'ds031587.mongolab.com', 31587, 'henry', 'mongo' );
-
-//'mongodb://heroku_app3222703:5n2egki91f3nt7pu8ur2352iba@ds031587.mongolab.com:31587/heroku_app3222703'
-// mongo ds031587.mongolab.com:31587/heroku_app3222703 -u <user> -p <password>
-//'mongodb://heroku_app3222703:5n2egki91f3nt7pu8ur2352iba@ds031587.mongolab.com:31587/heroku_app3222703'
 
 // Service
 exports.load = function ( req, res, next ) 

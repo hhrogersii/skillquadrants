@@ -4,7 +4,7 @@
 
 exports.login = function( req, res )
 	{//res.send( '<form action="http://localhost:3000/user/authenticate" method="post"><label for="password">Password:</label><input type="text" name="password"><input type="submit" value="Log In"></form><a id="logincreate" href="http://localhost:3000/user/create">Create Account</a>' );
-		res.send( '<form action="#" method="post"><label for="password">Password:</label><input type="password" id="password" name="password"><br /><input type="button" id="session-authenticate" value="Log In" class="btn"></form><a id="session-create" href="#">Create Account</a>' );
+		res.send( '<form id="session-form" action="#" method="post"><label for="password">Password:</label><input type="password" id="password" name="password"><br /><input type="button" id="session-authenticate" value="Log In" class="btn"></form><a id="session-create" href="#">Create Account</a>' );
 	};
 
 exports.logout = function( req, res )
@@ -52,7 +52,7 @@ exports.authenticated = function( req, res )
 	
 exports.create = function( req, res )
 	{//res.send( '<form action="http://localhost:3000/user/create" method="post"><label for="name">Name:</label><input type="text" name="name"><br /><label for="email">Email:</label><input type="text" name="email"><br /><label for="password">Password:</label><input type="text" name="password"><br /><input type="submit" value="Create"></form><a href="http://localhost:3000/user/create">Create Account</a>' );
-		res.send( '<form action="#" method="post"><label for="name">Name:</label><input type="text" id="name" name="name"><br /><label for="email">Email:</label><input type="text" id="email" name="email"><br /><label for="password">Password:</label><input type="password" id="password" name="password"><br /><input type="button" id="session-save" value="Create" class="btn"></form><a id="session-login" href="#">Log In</a>' );
+		res.send( '<form id="session-form" action="#" method="post"><label for="name">Name:</label><input type="text" id="name" name="name"><br /><label for="email">Email:</label><input type="text" id="email" name="email"><br /><label for="password">Password:</label><input type="password" id="password" name="password"><br /><input type="button" id="session-save" value="Create" class="btn"></form><a id="session-login" href="#">Log In</a>' );
 	};
 
 exports.created = function( req, res )

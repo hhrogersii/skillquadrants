@@ -10,7 +10,6 @@
  
 // DAO
 var UserProvider = require('./userprovider-mongodb').UserProvider;
-
 var up = new UserProvider( 'ds031587.mongolab.com', 31587, 'henry', 'mongo' );
 
 exports.session = function ( req, res, next ) 
@@ -122,28 +121,6 @@ exports.authorize = function ( req, res, next )
 			: next( new Error('Go to loggin.') );
 		}
 	};
-
-var sess = req.session;
-var body = '';
-
-if (sess.views) {
-	res.setHeader('Content-Type', 'text/html');
-	
-	body = '<p>views: ' + sess.views + '</p>';
-	body += '<p>expires in: ' + (sess.cookie.maxAge / 1000) + 's</p>';
-	sess.views++;
-} else {
-	sess.views = 1;
-	body = 'welcome to the session demo. refresh!';
-}
-      
-function andRestrictTo(role) {
-  return function(req, res, next) {
-    req.authenticatedUser.role == role
-      ? next()
-      : next(new Error('Unauthorized'));
-  }
-}
 
 app.del('/user/:id', loadUser, andRestrictTo('admin'), function(req, res){
   res.send('Deleted user ' + req.user.name);
