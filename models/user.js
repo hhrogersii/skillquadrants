@@ -9,8 +9,26 @@
  */
  
 // DAO
-var UserProvider = require('./userprovider-mongodb').UserProvider;
-var up = new UserProvider( 'ds031587.mongolab.com', 31587, 'henry', 'mongo' );
+var config = require( '../configure' ).mongo;
+var UserProvider = require('./provider-mongodb').MongoProvider;
+	UserProvider.prototype.findByPassword = function(password, callback) 
+	{
+	//.Users.find({'password':'narfblarg'}).skip(0).limit(30)
+	
+		this.getCollection( function(error, collection) {
+			if( error ) callback(error)
+			else {
+				collection.findOne(
+					{'password': password}
+				  , function( error, doc ) {
+						if( error ) callback(error)
+						else callback( null, doc )
+					}
+				);
+			}
+		} );
+	};
+var up = new UserProvider( 'Users', config.database, config.host, config.port, config.uname, config.pword );
 
 exports.session = function ( req, res, next ) 
 	{
@@ -80,11 +98,22 @@ exports.create = function ( req, res, next )
 	{
 		if ( req.session.authenticatedUser )
 		{
+			//if the result of the previus password check results in a session
+			//then a user with that password already exists and go to next route
 			delete req.session.authenticatedUser;
 			next();
 		}
 		else
 		{
+/*
+if ( doc.roles !== undefined )
+					{
+					 	for(var j =0;j< User.roles.length; j++) 
+					 	{
+							User.roles[j].created_at = new Date();
+						}
+					}
+*/
 			up.save(
 				{//user
 					name: req.param('name')

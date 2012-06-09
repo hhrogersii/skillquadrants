@@ -1,7 +1,19 @@
 /*
  * /routes/blog.js
  */
-
+exports.list = function ( req, res )
+	{
+		res.render(
+			'blog'
+		  , {
+				locals: {
+					title: 'Blog Posts'
+			  	  , articles: req.articles
+			  	}
+			}
+		)
+	};
+	
 exports.view = function(req, res ) 
 	{
   		res.render(
@@ -44,12 +56,12 @@ exports.edit = function(req, res)
     
 exports.save = function(req, res)
 	{
-		res.redirect('/');
+		res.redirect( '/blog/' + req.article._id );
 	};
 
 exports.update = function(req, res)
 	{
-		res.redirect('/');
+		res.redirect( '/blog/' + req.article._id );
 	};
 	
 exports.remove = function(req, res)
@@ -62,13 +74,13 @@ exports.remove = function(req, res)
 			break;
 		
 			default:
-				res.redirect('/');
+				res.redirect( '/blog' );
 		}
 	};
 	
 exports.comment = function(req, res) 
 	{
-		res.redirect('/');
+		res.redirect( '/blog/' + req.param('_id') );
 	};
 
 

@@ -32,7 +32,7 @@ exports.set = function( app, model, sio )
 	app.get(
 		'/blog'
 			, model.blog.all
-				, route.site.blog 
+				, route.blog.list 
 	);
 	app.get(
 		'/blog/new'

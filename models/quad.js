@@ -3,8 +3,29 @@
  */
  
 // DAO
-var ChartProvider = require( './chartprovider-mongodb' ).ChartProvider;
-var cp = new ChartProvider( 'ds031587.mongolab.com', 31587, 'henry', 'mongo' );
+var config = require( '../configure' ).mongo;
+var ChartProvider = require( './provider-mongodb' ).MongoProvider;
+	ChartProvider.prototype.comment = function( id, comment, callback ) 
+		{
+			this.getCollection( function( error, collection ) {
+				if ( error ) 
+				{
+					callback(error)
+				}
+				else 
+				{
+					collection.update( 
+						{ '_id': collection.db.bson_serializer.ObjectID.createFromHexString(id) } 
+					  , { 
+						  	'$push': { 'comments': comment } 
+					      , 'updated_at': new Date()
+					    }
+					);
+					callback( null, comment );
+				}
+			} );
+		};
+var ap = new ChartProvider( 'Charts', config.database, config.host, config.port, config.uname, config.pword );
 
 // Service
 exports.load = function ( req, res, next ) 

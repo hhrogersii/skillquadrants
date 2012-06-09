@@ -5,13 +5,14 @@
 var express = require( 'express' )
   , stylus = require( 'stylus' )
   , nib = require( 'nib' ) 
-  , http = require ( 'http' )
-  , sess = require( 'connect-mongodb' );
+  , http = require ( 'http' );
   
 // Resources
+var config = require( './configure' );
+
 var socket = require( './socket' )
   , routes = require( './routes' )
-  , models = require( './models' ) ;
+  , models = require( './models' )( config ) ;
 
 
 // Create server
@@ -20,6 +21,8 @@ var app = module.exports = express.createServer() ;
 // Configure server
 app.configure( function() 
 {
+	
+	
 	app.set( 'views', __dirname + '/views' ) ;
 	app.set( 'view engine', 'jade' ) ;
 	
@@ -46,6 +49,7 @@ app.configure( 'production', function() {
 });
 
 
+
 // Create socket channel
 socket.set( app, models );
     
@@ -54,8 +58,7 @@ routes.set( app, models, socket );
 
 
 // Open server port
-var port = process.env.PORT || 3000;
-app.listen( port, function () {
-	var addr = app.address();
-	console.log( 'Express server listening on port http://%s:%d in %s mode!', addr.address, addr.port, app.settings.env );
+app.listen( config.web.port, function () {
+	config.set( { 'addr': app.address() } );
+	console.log( 'Express server listening on port http://%s:%d in %s mode!', config.addr.address, config.addr.port, app.settings.env );
 });
