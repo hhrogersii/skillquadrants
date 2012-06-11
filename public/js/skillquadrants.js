@@ -1,10 +1,9 @@
 /*jslint browser: true, bitwise: true, nomen: true, undef: true, sloppy: true, white: true */
 /*globals _, Kinetic, Stage, Chart, Skill, Legend, Editor, Alert, Session */
 
-(function($){
+( function($){
 
 	var socket
-	  , activeTitle = false
 	  , rootURL = window.location.protocol +'//'+ window.location.host
 	  , mongoURL = 'https://www.mongolab.com/api/1/databases/heroku_app3222703/collections';
 
@@ -27,98 +26,6 @@
 				} );		
 			} );		
 
-			/*--------------------------------------*/
-
-			$('#modify button').click( function() {
-				Stage.setModifiable(this.value);
-			} );
-
-			/*--------------------------------------*/
-			$('button#save').click( function() {
-				Chart.save();
-				Stage.drawQueue();
-			} );
-			$('button#reset').click( function() {
-				Chart.reset();
-				Stage.drawQueue();
-			} );
-			$('button#share').click( function() {
-				Chart.share();
-				Stage.drawQueue();
-			} );
-
-			/*--------------------------------------*/
-
-			$('#access button').click( function() {
-				Chart.access(this.value);
-				Stage.drawQueue();
-			} );
-
-			/*--------------------------------------*/
-
-			$('button#new').click( function() {
-				Chart.create();
-				Stage.drawQueue();
-			} );
-			$('button#copy').click( function() {
-				Chart.copy();
-				Stage.drawQueue();
-			} );
-			$('button#delete').click( function() {
-				Chart.remove();
-				Chart.create();
-				Stage.drawQueue();
-			} );
-
-			/*--------------------------------------*/
-
-			$('button#skillnew').click( function() {
-				Skill.create();
-				Stage.drawQueue();
-			} );
-			$('button#skilldelete').click( function() {
-				Skill.remove();
-				Stage.drawQueue();
-			} );
-			$('button#skillcopy').click( function() {
-				Skill.copy();
-				Stage.drawQueue();
-			} );
-
-			/*--------------------------------------*/
-
-			$('div#inputSkill').storage( {
-				storageKey: 'input'
-			  , onExit: function( elem, text )
-				{
-					var $this = $(this)
-					  , s = Chart.activeSkill();
-					s.getChild('label').setText(text);
-					s.getChild('label').show();
-					s.data.l = text;
-					s.getParent().enqueue();
-					Stage.drawQueue();
-					elem.hide();
-				}
-			  , store: false
-			} );
-
-			$('div#inputTitle').storage( {
-				storageKey: 'input'
-			  , onExit: function( elem, text )
-				{
-					var $this = $(this)
-					  , t = activeTitle;
-					t.setText(text);
-					t.show();
-					Stage.enqueue('quad');
-					Stage.drawQueue();
-					elem.hide();
-					activeTitle = false;
-				}
-			  , store: false
-			} );
-
 			//(canvasStage.onFrame(function(frame){
 			//	animate();
 			//} ));
@@ -136,6 +43,44 @@
 			  , ready = false
 			  , modifiable = false;
 
+			/*--------------------------------------*/
+			$('#modify button').click( function() {
+				Stage.modifiable( ( this.value === 'unlock' ) );
+			} );
+			/*--------------------------------------*/
+			$('button#save').click( function() {
+				Chart.save();
+				Stage.drawQueue();
+			} );
+			$('button#reset').click( function() {
+				Chart.reset();
+				Stage.drawQueue();
+			} );
+			$('button#share').click( function() {
+				Chart.share();
+				Stage.drawQueue();
+			} );
+			/*--------------------------------------*/
+			$('#access button').click( function() {
+				Chart.access(this.value);
+				Stage.drawQueue();
+			} );
+			/*--------------------------------------*/
+			$('button#new').click( function() {
+				Chart.create();
+				Stage.drawQueue();
+			} );
+			$('button#copy').click( function() {
+				Chart.copy();
+				Stage.drawQueue();
+			} );
+			$('button#delete').click( function() {
+				Chart.remove();
+				Chart.create();
+				Stage.drawQueue();
+			} );
+			/*--------------------------------------*/
+			
 			return {
 				init: function ( canvasId, canvasWidth, canvasHeight )
 				{
@@ -151,7 +96,8 @@
 						{
 							if ( data )
 							{
-								Stage.set(data);
+								stageData = data;
+								ready = true;
 								Stage.draw();
 							}
 							else
@@ -177,12 +123,7 @@
 				{
 					return stageData;
 				}
-			  , set: function ( data )
-				{
-					stageData = data;
-					ready = true;
-				}
-			  , draw: function ( )
+			  , draw: function ( )	
 				{
 					var n;
 					canvasLayers = {};
@@ -264,31 +205,28 @@
 						);
 					} );
 				}
-			  , setRestricted: function ( r )
+			  , restricted: function ( r )
 				{
-					if ( r )
+					$('#restricted').toggle(!r);
+					if (r)
 					{
-						$('#restricted').hide();
-					}
-					else
-					{
-						$('#restricted').show();
+						this.modifiable(!r);
 					}
 				}
-			  , setModifiable: function ( m )
+			  , modifiable: function ( m )
 				{
-					if ( m === 'unlock' )
+					modifiable = m;
+					if ( Stage.isReady() )
 					{
-						modifiable = true;
-						//Chart.listen(true);
-						$('#modifiable').show();
+						Stage.list();
+						if ( Chart.isReady() )
+						{
+							Chart.listen(m);
+						}
 					}
-					else
-					{
-						modifiable = false;
-						//Chart.listen(false);
-						$('#modifiable').hide();
-					}
+					$('#modifiable').toggle(m);
+					$('#unlock').toggleClass('active',m);
+					$('#relock').toggleClass('active',!m);
 				}
 			  , getModifiable: function ( )
 				{
@@ -301,10 +239,6 @@
 								? '{$or:[{"access":"public"},{"userid":"'+ Session.getUserid() +'"}]}' 
 								: '{"access":"public"}' 
 						) + ']}';
-
-					//{ $and: [ { "active": true }, { "access": "public" } ] }
-					//{ $or : [ { "access": "public" } , { "userid" : "4fc9788de4b004ed95d202a6" } ] }
-					
 					$.ajax( {
 						url: mongoURL + '/Charts?q='+q+'&f={"_id":1,"label":1,"date":1}&s={"updated_at":-1,"label":1}'
 					  , data: {
@@ -398,23 +332,7 @@
 								'dblclick'
 							  , function()
 								{
-									activeTitle = this;
-
-									var h = this.getTextHeight()+8
-									  , w = this.getTextWidth()+4;
-
-									Editor.inputTitle( {
-										h: h
-									  , w: w
-									  , x: x-w/2
-									  , y: y+h/2-16
-									  , l: this.getText()
-									} );
-
-									this.hide();
-									canvasLayers.quad.enqueue();
-									Stage.drawQueue();
-
+									Editor.inputTitle( this, x, y );
 									//socket.emit( 'input', d );
 									//not jquery
 									//e.preventDefault();
@@ -576,6 +494,21 @@
 			  , chartData = {}
 			  , activeSkill = false;
 
+			/*--------------------------------------*/
+			$('button#skillnew').click( function() {
+				Skill.create();
+				Stage.drawQueue();
+			} );
+			$('button#skilldelete').click( function() {
+				Skill.remove();
+				Stage.drawQueue();
+			} );
+			$('button#skillcopy').click( function() {
+				Skill.copy();
+				Stage.drawQueue();
+			} );
+			/*--------------------------------------*/
+			
 			return {
 				load: function ( query )
 				{
@@ -590,7 +523,17 @@
 						{
 							if ( data )
 							{
-								Chart.set( data[0] );
+								chartData = data[0];
+								ready = true;
+			
+								if ( !Stage.isReady() )
+								{
+									Stage.load( chartData.theme );
+								}
+								else
+								{
+									Stage.draw();
+								}
 							}
 							else
 							{
@@ -611,29 +554,11 @@
 				{
 					return chartData;
 				}
-			  , set: function ( data )
-				{
-					chartData = data;
-					ready = true;
-
-					if ( !Stage.isReady() )
-					{
-						Stage.load( data.theme );
-					}
-					else
-					{
-						Stage.draw();
-					}
-						
-					Stage.setAccess( data.access );
-
-					Stage.setRestricted( ( data.userid === Session.getUserid() ) ? false : true );
-				}
 			  , draw: function ( )
 				{
 					var types = chartData.types
 					  , type = {}
-					  , listen = ( chartData.userid === Session.getUserid() && Stage.getModifiable() ) ? true : false
+					  , listen = ( this.isOwner( Session.getUserid() ) && Stage.getModifiable() ) 
 					  , t
 					  , s;
 
@@ -649,6 +574,8 @@
 							Stage.getLayer(types[t].n).listen(listen);
 						}
 					}
+					Stage.setAccess( chartData.access );
+					Stage.restricted( !Chart.isOwner( Session.getUserid() ) );
 				}
 			  , listen: function ( b )
 				{
@@ -660,6 +587,10 @@
 						Stage.getLayer(types[t].n).listen(b);
 					}
 				}
+			  , isOwner: function ( o )
+			    {
+				    return ( o === chartData.userid );
+			    }
 			  , activeSkill: function ( s )
 				{
 					if ( typeof s !== 'undefined' )
@@ -1224,8 +1155,43 @@
 		{
 			var stageData = {}
 			  , chartData = {}
-			  , active = false;
-
+			  , active = false
+			  , activeTitle = false;
+			  
+			/*--------------------------------------*/
+			$('div#inputSkill').storage( {
+				storageKey: 'input'
+			  , onExit: function( elem, text )
+				{
+					var $this = $(this)
+					  , s = Chart.activeSkill();
+					s.getChild('label').setText(text);
+					s.getChild('label').show();
+					s.data.l = text;
+					s.getParent().enqueue();
+					Stage.drawQueue();
+					elem.hide();
+				}
+			  , store: false
+			} );
+			/*--------------------------------------*/
+			$('div#inputTitle').storage( {
+				storageKey: 'input'
+			  , onExit: function( elem, text )
+				{
+					var $this = $(this)
+					  , t = activeTitle;
+					t.setText(text);
+					t.show();
+					Stage.enqueue('quad');
+					Stage.drawQueue();
+					elem.hide();
+					activeTitle = false;
+				}
+			  , store: false
+			} );
+			/*--------------------------------------*/
+			
 			return {
 				get: function ( )
 				{
@@ -1502,18 +1468,27 @@
 							}
 						).html(d.l).show().focus();
 				}
-			  , inputTitle: function ( d )
+			  , inputTitle: function ( d, x, y )
 				{
+					activeTitle = d;
+
+					var h = d.getTextHeight()+8
+					  , w = d.getTextWidth()+4;
+
 					$('div#inputTitle').css(
 							{
-								"left": d.x
-							  , "top": d.y
-							//, "width": d.w
-							  , "height": d.h
+								"left": x-w/2
+							  , "top": y+h/2-16
+							//, "width": w
+							  , "height": h
 							  , "font-size": "20px"
 							  , "font-style": "italic"
 							}
-						).html(d.l).show().focus();
+						).html(d.getText()).show().focus();
+
+					d.hide();
+					Stage.enqueue('quad');
+					Stage.drawQueue();
 				}
 			};
 		}() );
@@ -1549,8 +1524,10 @@
 
 	var Session = ( function ( )
 		{
-			var hasSession = false;
+			var hasSession = false
+			  , sesionData = {'_id': 0};
 			
+			/*--------------------------------------*/
 			$('#login').click( function() {
 				if ( !$(this).hasClass('active') )
 				{
@@ -1563,6 +1540,14 @@
 					Session.logout();
 				}
 			} );
+			$('#session-modal .modal-body').on( 'click', '#session-authenticate', function() { Session.authenticate(); } );
+			$('#session-modal .modal-body').on( 'click', '#session-create', function() { Session.create(); });
+			$('#session-modal .modal-body').on( 'click', '#session-login', function() { Session.login(); } );
+			$('#session-modal .modal-body').on( 'click', '#session-logout', function() { Session.logout(); } );
+			$('#session-modal .modal-body').on( 'click', '#session-save', function() { Session.save(); } );
+			$('#session-modal .modal-body').on( 'submit', '#session-form-auth', function(e) { Session.authenticate(); e.preventDefault(); } );
+			$('#session-modal .modal-body').on( 'submit', '#session-form-create', function(e) { Session.save(); e.preventDefault(); } );
+			/*--------------------------------------*/
 			
 			return {
 				init: function ( callback )
@@ -1572,14 +1557,8 @@
 					  , dataType: 'json'
 					  , success: function( data )
 						{
-							if ( data && data.hasSession )
-							{
-								Session.enable(data);
-							}
-							else
-							{
-								Session.disable(data);
-							}
+							Session.set( data );
+							Stage.modifiable(false);
 							callback();
 						}
 					  , failure: function ( )
@@ -1596,17 +1575,7 @@
 					  , dataType: 'html'
 					  , success: function( data )
 						{
-							$('#account').html(data);
-							$('#session-authenticate').click( function() {
-								Session.authenticate();
-							} );
-							$('#session-form').submit( function(e) {
-								Session.authenticate();
-								e.preventDefault();
-							} );
-							$('#session-create').click( function() {
-								Session.create();
-							} );
+							$('#session-modal .modal-body').html(data);
 							$('#session-modal').modal('show');
 							$('#password').focus();
 						}
@@ -1623,9 +1592,10 @@
 					  , dataType: 'json'
 					  , success: function( data )
 						{
-							Alert.msg( 'Success', 'You are logged out.' );
-							Session.disable(data);
+							Session.set( data );
+							Stage.restricted(true);
 							$('#session-modal').modal('hide');
+							Alert.msg( 'Success', 'You are logged out.' );
 						}
 					  , failure: function ( )
 						{
@@ -1646,14 +1616,8 @@
 					  , dataType: 'json'
 					  , success: function ( data ) 
 						{
-							if ( data && data.hasSession )
-							{
-								Session.enable(data);
-							}
-							else
-							{
-								Session.disable(data);
-							}
+							Session.set( data );
+							Stage.restricted( !data.hasSession || !Chart.isOwner(Session.getUserid()) );
 						}
 					  , failure: function ( )
 						{
@@ -1668,17 +1632,7 @@
 					  , dataType: 'html'
 					  , success: function( data )
 						{
-							$('#account').html(data);
-							$('#session-save').click( function() {
-								Session.save();
-							} );
-							$('#session-form').submit( function(e) {
-								Session.save();
-								e.preventDefault();
-							} );
-							$('#session-login').click( function() {
-								Session.login();
-							} );
+							$('#session-modal .modal-body').html(data);
 							$('#session-modal').modal('show');
 							$('#name').focus();
 						}
@@ -1702,14 +1656,7 @@
 					  ,	contentType: 'application/json'
 					  , dataType: 'json'
 					  , success: function ( data ) {
-							if ( data && data.hasSession )
-							{
-								Session.enable(data);
-							}
-							else
-							{
-								Session.disable(data);
-							}
+							Session.set( data );
 						}
 					  , failure: function ( )
 						{
@@ -1719,58 +1666,23 @@
 				}
 			  , isLoggedIn: function ( )
 				{
-					return ( hasSession !== false ) ? true : false;
+					return ( hasSession !== false );
 				}
-			  , enable: function ( data )
+			  , set: function ( data )
 				{
-					hasSession = data.session;
+					hasSession = data.hasSession;
+					sessionData = data.session;
 					$('#userid').val(data.session._id);
-					$('#account').html(data.html);
-					$('#login').button('toggle');
-					
-					$('#session-logout').click( function() {
-						Session.logout();
-					} );
-					if ( Stage.isReady() )
-					{
-						Stage.list();
-						if ( Chart.isReady() )
-						{
-							Chart.listen(true);
-						}
-					}
-					Stage.setRestricted(false);
-				}
-			  , disable: function ( data )
-				{
-					hasSession = false;
-					$('#userid').val(0);
 					if ( data.html )
 					{
-						$('#account').html(data.html);
+						$('#session-modal .modal-body').html(data.html);
 					}
-					$('#logout').button('toggle');
-					
-					$('#session-login').click( function() {
-						Session.login();
-					} );				
-					$('#session-create').click( function() {
-						Session.create();
-					} );
-					if ( Stage.isReady() )
-					{
-						Stage.list();
-						if ( Chart.isReady() )
-						{
-							Chart.listen(false);
-						}
-					}
-					Stage.setRestricted(true);
-					Stage.setModifiable(false);
+					$('#login').toggleClass('active',hasSession);
+					$('#logout').toggleClass('active',!hasSession);
 				}
 			  , getUserid: function ( )
 				{
-					return ( hasSession !== false ) ? hasSession._id : '';
+					return ( hasSession !== false ) ? sessionData._id : '0';
 				}
 			};
 		}() );
@@ -1829,4 +1741,4 @@
 
 	init( 'canvas', 640, 640 );
 
-} )(jQuery);
+}(jQuery) );

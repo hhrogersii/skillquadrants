@@ -12,13 +12,9 @@
 			input#userid( type="hidden", name="userid", value="0" )
 		- else
 			input#userid( type="hidden", name="userid", value=session.authenticatedUser )
-		#session.btn-group( data-toggle="buttons-radio" )
-			- if (session.authenticatedUser)
-				button#login.btn.btn-primary.btn-large.active( type="button" ) Login
-				button#logout.btn.btn-primary.btn-large( type="button" ) Logout
-			- else
-				button#login.btn.btn-primary.btn-large( type="button" ) Login
-				button#logout.btn.btn-primary.btn-large.active( type="button" ) Logout
+		#session.btn-group
+			button#login.btn.btn-primary.btn-large( type="button" ) Login
+			button#logout.btn.btn-primary.btn-large( type="button" ) Logout
 	
 		#chart.btn-group
 			a.btn.dropdown-toggle.btn-primary( data-toggle="dropdown", href="#" ) Load Chart...
@@ -26,8 +22,8 @@
 			ul.dropdown-menu
 		
 		#restricted
-			#modify.btn-group( data-toggle="buttons-radio" )
-				button#lock.btn.btn-primary.btn-large.active( type="button", value="lock" ) Locked
+			#modify.btn-group
+				button#relock.btn.btn-primary.btn-large( type="button", value="relock" ) Locked
 				button#unlock.btn.btn-primary.btn-large( type="button", value="unlock" ) Unlocked
 			
 			#modifiable
@@ -57,11 +53,10 @@
 		.modal-header
 			button.close( data-dismiss="modal" ) ×
 			h3 User Session
-		.modal-body
-			#account One fine body…
+		.modal-body One fine body…
 		.modal-footer
 			button.btn.btn-primary( type="button", data-dismiss="modal" ) Close
 
 script( src='/js/kinetic-v3.9.1.min.js' )
 script( src='/js/storage2.min.js' )
-script( src='/js/skillquadrants.min.js' )
+script( src='/js/skillquadrants.js' )

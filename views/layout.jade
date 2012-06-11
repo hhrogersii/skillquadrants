@@ -3,20 +3,18 @@ html
 	head
 		title= title
 		meta( name='viewport',content='width=device-width, initial-scale=1.0' )
+		meta( charset="UTF-8" )
+		meta( name="description", content="visualizing experience versus understanding" )
+		meta( name="keywords", content="HTML5,Canvas,node.js,jQuery,MongoDB,KineticJS,Heroku,Twitter Bootstrap,jade,stylus" )
+		meta( name="author", content="Henry Rogers" )
+		
+		//icon
+		link( href='/img/favicon.ico', rel='shortcut icon', type='image/x-icon' )
+
 		// jquery
 		script( src='http://code.jquery.com/jquery.min.js' )
 		// zepto
 		//script( src='/js/zepto.min.js' )
-
-		//icon
-		link( href='/img/favicon.ico', rel='shortcut icon', type='image/x-icon' )
-		
-		// jquery ui
-		//link( rel='stylesheet', href='http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css' )
-		//script( src='http://code.jquery.com/ui/1.8.18/jquery-ui.min.js' )
-		
-		// jquery plugins
-		script( src='/js/jquery.event.drag-2.0.js' )
 
 		// the amazing underscore
 		script( src='/js/underscore-min.js' )
@@ -32,21 +30,15 @@ html
 		link( rel='stylesheet', href='/css/style.css' )
 		link( rel='stylesheet', href='/css/ChunkFive-fontfacekit/stylesheet.css' )
 
-		// addyosmani jquery ui bootstrap
-		//link( rel='stylesheet', href='/js/addyosmani-jquery-ui-bootstrap-cf2a77b/css/custom-theme/jquery-ui-1.8.16.custom.css' )
-		//link( rel='stylesheet', href='/js/addyosmani-jquery-ui-bootstrap-cf2a77b/css/demo.css' )
-
 		//socket.io
 		script( src='/js/socket.io.min.js' )
-		//script( src='/js/socket.io.chat.js' )
-
 body
 	.navbar.navbar-fixed-top
 		.navbar-inner
 			.container
 				a.brand( href='http://github.com/hhrogersii/skillquadrants' ) Skill Quadrants
 				ul.nav
-					li.active
+					li
 						a( href='/' ) Home
 					li
 						a( href='/about' ) About
@@ -70,6 +62,7 @@ body
 				#logo
 				h1#slogan Sq: <small>visualizing experience vs. understanding (v0.2)</small>
 				button#icon-github.btn.btn-inverse
+					a( href='http://github.com/hhrogersii/skillquadrants' )
 						i.icon-github
 				//button#icon-twitter.btn.btn-inverse
 				//i.icon-twitter
@@ -78,3 +71,8 @@ body
 				!= body
 		footer.footer
 			img( src='/img/tools.png', width="860", height="46", alt="tools" )
+
+	script
+		$(".navbar ul.nav a").each( function() {
+			if (window.location.pathname === this.pathname) $(this).parent().toggleClass("active");
+		});
